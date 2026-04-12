@@ -1,0 +1,15 @@
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Composer (se usar no futuro)
+/vendor/
+
+# Arquivos sensíveis
+.env
