@@ -8,6 +8,9 @@ CREATE DATABASE IF NOT EXISTS mvc_app
 
 USE mvc_app;
 
+-- ============================================================
+-- Tabela de usuários (autenticação)
+-- ============================================================
 CREATE TABLE IF NOT EXISTS users (
     id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name          VARCHAR(100)  NOT NULL,
@@ -16,12 +19,28 @@ CREATE TABLE IF NOT EXISTS users (
     created_at    TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS items (
-    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name        VARCHAR(100)  NOT NULL,
-    description TEXT          NOT NULL,
-    price       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+-- ============================================================
+-- Tabela de produtos (estoque do restaurante)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS produtos (
+    id                INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome              VARCHAR(200)   NOT NULL,
+    quantidade        DECIMAL(10,3)  NOT NULL DEFAULT 0,
+    quantidade_minima DECIMAL(10,3)  NOT NULL DEFAULT 1,
+    valor             DECIMAL(10,2)  NOT NULL DEFAULT 0.00,
+    data_compra       DATE,
+    created_at        TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- Tabela de funcionários
+-- ============================================================
+CREATE TABLE IF NOT EXISTS funcionarios (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome       VARCHAR(150)  NOT NULL,
+    cargo      VARCHAR(100)  NOT NULL,
+    telefone   VARCHAR(20),
+    created_at TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================

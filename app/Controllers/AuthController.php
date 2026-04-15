@@ -18,7 +18,7 @@ class AuthController extends BaseController
     public function loginForm(): void
     {
         if (\Session::has('user_id')) {
-            $this->redirect('/items');
+            $this->redirect('/produtos');
         }
 
         $this->render('auth/login', [
@@ -55,7 +55,7 @@ class AuthController extends BaseController
         \Session::set('user_id',   $user['id']);
         \Session::set('user_name', $user['name']);
 
-        $this->redirect('/items');
+        $this->redirect('/produtos');
     }
 
     // GET /logout

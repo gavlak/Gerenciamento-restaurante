@@ -32,14 +32,26 @@ $router->get('login',  'AuthController', 'loginForm');
 $router->post('login', 'AuthController', 'loginSubmit');
 $router->get('logout', 'AuthController', 'logout');
 
-// Protected routes — checked by AuthMiddleware before the controller runs
-$router->get('',                   'ItemController', 'index',  protected: true);
-$router->get('items',              'ItemController', 'index',  protected: true);
-$router->get('items/create',       'ItemController', 'create', protected: true);
-$router->post('items/store',       'ItemController', 'store',  protected: true);
-$router->get('items/edit/{id}',    'ItemController', 'edit',   protected: true);
-$router->post('items/update/{id}', 'ItemController', 'update', protected: true);
-$router->post('items/delete/{id}', 'ItemController', 'delete', protected: true);
-$router->get('items/{id}',         'ItemController', 'show',   protected: true);
+// Produtos (estoque)
+$router->get('',                       'ProdutoController',      'index',  protected: true);
+$router->get('produtos',              'ProdutoController',      'index',  protected: true);
+$router->get('produtos/create',       'ProdutoController',      'create', protected: true);
+$router->post('produtos/store',       'ProdutoController',      'store',  protected: true);
+$router->get('produtos/edit/{id}',    'ProdutoController',      'edit',   protected: true);
+$router->post('produtos/update/{id}', 'ProdutoController',      'update', protected: true);
+$router->post('produtos/delete/{id}', 'ProdutoController',      'delete', protected: true);
+$router->get('produtos/{id}',         'ProdutoController',      'show',   protected: true);
+
+// Funcionários
+$router->get('funcionarios',              'FuncionarioController', 'index',  protected: true);
+$router->get('funcionarios/create',       'FuncionarioController', 'create', protected: true);
+$router->post('funcionarios/store',       'FuncionarioController', 'store',  protected: true);
+$router->get('funcionarios/edit/{id}',    'FuncionarioController', 'edit',   protected: true);
+$router->post('funcionarios/update/{id}', 'FuncionarioController', 'update', protected: true);
+$router->post('funcionarios/delete/{id}', 'FuncionarioController', 'delete', protected: true);
+
+// Scanner QR Code (NFC-e)
+$router->get('notas/scanner',   'NotaFiscalController', 'scanner',  protected: true);
+$router->post('notas/importar', 'NotaFiscalController', 'importar', protected: true);
 
 $router->dispatch();
