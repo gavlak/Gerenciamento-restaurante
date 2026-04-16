@@ -11,19 +11,21 @@ class Produto extends BaseModel
         string $nome,
         float  $quantidade,
         float  $quantidade_minima,
+        string $unidade,
         float  $valor,
         string $data_compra
     ): bool {
         $stmt = $this->db->prepare(
             "INSERT INTO {$this->table}
-                (nome, quantidade, quantidade_minima, valor, data_compra)
+                (nome, quantidade, quantidade_minima, unidade, valor, data_compra)
              VALUES
-                (:nome, :quantidade, :quantidade_minima, :valor, :data_compra)"
+                (:nome, :quantidade, :quantidade_minima, :unidade, :valor, :data_compra)"
         );
         return $stmt->execute([
             ':nome'              => $nome,
             ':quantidade'        => $quantidade,
             ':quantidade_minima' => $quantidade_minima,
+            ':unidade'           => $unidade,
             ':valor'             => $valor,
             ':data_compra'       => $data_compra,
         ]);
@@ -34,6 +36,7 @@ class Produto extends BaseModel
         string $nome,
         float  $quantidade,
         float  $quantidade_minima,
+        string $unidade,
         float  $valor,
         string $data_compra
     ): bool {
@@ -42,6 +45,7 @@ class Produto extends BaseModel
              SET nome = :nome,
                  quantidade = :quantidade,
                  quantidade_minima = :quantidade_minima,
+                 unidade = :unidade,
                  valor = :valor,
                  data_compra = :data_compra
              WHERE id = :id"
@@ -51,6 +55,7 @@ class Produto extends BaseModel
             ':nome'              => $nome,
             ':quantidade'        => $quantidade,
             ':quantidade_minima' => $quantidade_minima,
+            ':unidade'           => $unidade,
             ':valor'             => $valor,
             ':data_compra'       => $data_compra,
         ]);
@@ -62,6 +67,17 @@ class Produto extends BaseModel
             "SELECT * FROM {$this->table}
              WHERE quantidade < quantidade_minima
              ORDER BY nome ASC"
+        );
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Lista produtos ordenados alfabeticamente (usado nos cardapios).
+     */
+    public function findAllOrdenado(): array
+    {
+        $stmt = $this->db->query(
+            "SELECT * FROM {$this->table} ORDER BY nome ASC"
         );
         return $stmt->fetchAll();
     }

@@ -2,7 +2,7 @@
 
 <h2>Novo Produto</h2>
 
-<form method="POST" action="<?= BASE_URL ?>/produtos/store" style="max-width: 500px;">
+<form method="POST" action="<?= BASE_URL ?>/produtos/store" style="max-width: 520px;">
 
     <div class="form-group">
         <label for="nome">Nome</label>
@@ -20,17 +20,35 @@
 
     <div class="form-group">
         <label for="quantidade">Quantidade</label>
-        <input
-            type="text"
-            id="quantidade"
-            name="quantidade"
-            value="<?= htmlspecialchars($old['quantidade'] ?? '', ENT_QUOTES) ?>"
-            class="<?= !empty($errors['quantidade']) ? 'is-invalid' : '' ?>"
-            placeholder="Ex: 10"
-        >
+        <div class="input-group">
+            <input
+                type="text"
+                id="quantidade"
+                name="quantidade"
+                value="<?= htmlspecialchars($old['quantidade'] ?? '', ENT_QUOTES) ?>"
+                class="<?= !empty($errors['quantidade']) ? 'is-invalid' : '' ?>"
+                placeholder="Ex: 2.5"
+            >
+            <select
+                id="unidade"
+                name="unidade"
+                class="<?= !empty($errors['unidade']) ? 'is-invalid' : '' ?>"
+            >
+                <?php $unidadeAtual = $old['unidade'] ?? 'UN'; ?>
+                <?php foreach ($unidades as $u): ?>
+                    <option value="<?= $u ?>" <?= $unidadeAtual === $u ? 'selected' : '' ?>><?= $u ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
         <?php if (!empty($errors['quantidade'])): ?>
             <span class="field-error"><?= htmlspecialchars($errors['quantidade'], ENT_QUOTES) ?></span>
         <?php endif; ?>
+        <?php if (!empty($errors['unidade'])): ?>
+            <span class="field-error"><?= htmlspecialchars($errors['unidade'], ENT_QUOTES) ?></span>
+        <?php endif; ?>
+        <small style="color:#6b7280; font-size:.8rem; display:block; margin-top:.35rem;">
+            Aceita valores decimais. Ex: 2.5 KG, 0.75 L, 10 UN
+        </small>
     </div>
 
     <div class="form-group">

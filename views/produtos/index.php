@@ -31,16 +31,23 @@
         <tbody>
             <?php foreach ($produtos as $produto): ?>
             <?php $estoqueBaixo = (float) $produto['quantidade'] < (float) $produto['quantidade_minima']; ?>
+            <?php $unidade = $produto['unidade'] ?? 'UN'; ?>
             <tr style="<?= $estoqueBaixo ? 'background:#fee2e2;' : '' ?>">
                 <td><?= (int) $produto['id'] ?></td>
                 <td>
                     <?= htmlspecialchars($produto['nome'], ENT_QUOTES) ?>
                     <?php if ($estoqueBaixo): ?>
-                        <span style="color:#dc2626; font-weight:bold; font-size:.8rem;">ESTOQUE BAIXO</span>
+                        <span class="badge-danger" style="margin-left:.4rem;">Estoque Baixo</span>
                     <?php endif; ?>
                 </td>
-                <td><?= number_format((float) $produto['quantidade'], 1, ',', '.') ?></td>
-                <td><?= number_format((float) $produto['quantidade_minima'], 1, ',', '.') ?></td>
+                <td>
+                    <?= number_format((float) $produto['quantidade'], 2, ',', '.') ?>
+                    <span style="color:#6b7280; font-size:.8rem;"><?= htmlspecialchars($unidade, ENT_QUOTES) ?></span>
+                </td>
+                <td>
+                    <?= number_format((float) $produto['quantidade_minima'], 2, ',', '.') ?>
+                    <span style="color:#6b7280; font-size:.8rem;"><?= htmlspecialchars($unidade, ENT_QUOTES) ?></span>
+                </td>
                 <td>R$ <?= number_format((float) $produto['valor'], 2, ',', '.') ?></td>
                 <td><?= $produto['data_compra'] ? htmlspecialchars($produto['data_compra'], ENT_QUOTES) : '—' ?></td>
                 <td>

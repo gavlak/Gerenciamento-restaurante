@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS produtos (
     nome              VARCHAR(200)   NOT NULL,
     quantidade        DECIMAL(10,3)  NOT NULL DEFAULT 0,
     quantidade_minima DECIMAL(10,3)  NOT NULL DEFAULT 1,
+    unidade           VARCHAR(10)    NOT NULL DEFAULT 'UN',
     valor             DECIMAL(10,2)  NOT NULL DEFAULT 0.00,
     data_compra       DATE,
     created_at        TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
@@ -41,6 +42,28 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     cargo      VARCHAR(100)  NOT NULL,
     telefone   VARCHAR(20),
     created_at TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- Tabela de cardápios (cada cardápio tem um dia e detalhes)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS cardapios (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome       VARCHAR(150)  NOT NULL,
+    dia        VARCHAR(20)   NOT NULL,
+    detalhes   TEXT          NOT NULL,
+    created_at TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- Tabela de ligação cardápio <-> produtos (insumos)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS cardapio_produtos (
+    cardapio_id INT UNSIGNED NOT NULL,
+    produto_id  INT UNSIGNED NOT NULL,
+    PRIMARY KEY (cardapio_id, produto_id),
+    FOREIGN KEY (cardapio_id) REFERENCES cardapios(id) ON DELETE CASCADE,
+    FOREIGN KEY (produto_id)  REFERENCES produtos(id)  ON DELETE CASCADE
 );
 
 -- ============================================================

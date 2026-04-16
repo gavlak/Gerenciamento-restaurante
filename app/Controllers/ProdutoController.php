@@ -9,6 +9,9 @@ class ProdutoController extends BaseController
 {
     private Produto $produtoModel;
 
+    /** Unidades de medida válidas aceitas no cadastro. */
+    private const UNIDADES_VALIDAS = ['UN', 'KG', 'G', 'L', 'ML', 'CX', 'PCT'];
+
     public function __construct()
     {
         $this->produtoModel = new Produto();
@@ -27,7 +30,9 @@ class ProdutoController extends BaseController
 
     public function create(): void
     {
-        $this->render('produtos/create');
+        $this->render('produtos/create', [
+            'unidades' => self::UNIDADES_VALIDAS,
+        ]);
     }
 
     public function store(): void
@@ -36,14 +41,21 @@ class ProdutoController extends BaseController
             'nome'              => 'required|min:2|max:200',
             'quantidade'        => 'required|numeric',
             'quantidade_minima' => 'required|numeric',
+            'unidade'           => 'required|max:10',
             'valor'             => 'required|numeric',
             'data_compra'       => 'required',
         ]);
 
+        $unidade = strtoupper(trim((string) ($_POST['unidade'] ?? '')));
+        if (empty($errors['unidade']) && !in_array($unidade, self::UNIDADES_VALIDAS, true)) {
+            $errors['unidade'] = 'Unidade inválida.';
+        }
+
         if (!empty($errors)) {
             $this->render('produtos/create', [
-                'errors' => $errors,
-                'old'    => $_POST,
+                'errors'   => $errors,
+                'old'      => $_POST,
+                'unidades' => self::UNIDADES_VALIDAS,
             ]);
             return;
         }
@@ -52,6 +64,7 @@ class ProdutoController extends BaseController
             nome:              htmlspecialchars(trim($_POST['nome']), ENT_QUOTES),
             quantidade:        (float) $_POST['quantidade'],
             quantidade_minima: (float) $_POST['quantidade_minima'],
+            unidade:           $unidade,
             valor:             (float) $_POST['valor'],
             data_compra:       $_POST['data_compra'],
         );
@@ -73,7 +86,10 @@ class ProdutoController extends BaseController
             return;
         }
 
-        $this->render('produtos/edit', ['produto' => $produto]);
+        $this->render('produtos/edit', [
+            'produto'  => $produto,
+            'unidades' => self::UNIDADES_VALIDAS,
+        ]);
     }
 
     public function update(string $id): void
@@ -82,16 +98,23 @@ class ProdutoController extends BaseController
             'nome'              => 'required|min:2|max:200',
             'quantidade'        => 'required|numeric',
             'quantidade_minima' => 'required|numeric',
+            'unidade'           => 'required|max:10',
             'valor'             => 'required|numeric',
             'data_compra'       => 'required',
         ]);
 
+        $unidade = strtoupper(trim((string) ($_POST['unidade'] ?? '')));
+        if (empty($errors['unidade']) && !in_array($unidade, self::UNIDADES_VALIDAS, true)) {
+            $errors['unidade'] = 'Unidade inválida.';
+        }
+
         if (!empty($errors)) {
             $produto = $this->produtoModel->findById((int) $id);
             $this->render('produtos/edit', [
-                'errors'  => $errors,
-                'old'     => $_POST,
-                'produto' => $produto,
+                'errors'   => $errors,
+                'old'      => $_POST,
+                'produto'  => $produto,
+                'unidades' => self::UNIDADES_VALIDAS,
             ]);
             return;
         }
@@ -101,6 +124,7 @@ class ProdutoController extends BaseController
             nome:              htmlspecialchars(trim($_POST['nome']), ENT_QUOTES),
             quantidade:        (float) $_POST['quantidade'],
             quantidade_minima: (float) $_POST['quantidade_minima'],
+            unidade:           $unidade,
             valor:             (float) $_POST['valor'],
             data_compra:       $_POST['data_compra'],
         );

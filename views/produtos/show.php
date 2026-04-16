@@ -18,12 +18,16 @@
         <td><?= htmlspecialchars($produto['nome'], ENT_QUOTES) ?></td>
     </tr>
     <tr>
+        <th>Unidade</th>
+        <td><?= htmlspecialchars($produto['unidade'] ?? 'UN', ENT_QUOTES) ?></td>
+    </tr>
+    <tr>
         <th>Quantidade</th>
-        <td><?= number_format((float) $produto['quantidade'], 1, ',', '.') ?></td>
+        <td><?= number_format((float) $produto['quantidade'], 2, ',', '.') ?> <?= htmlspecialchars($produto['unidade'] ?? 'UN', ENT_QUOTES) ?></td>
     </tr>
     <tr>
         <th>Quantidade Mínima</th>
-        <td><?= number_format((float) $produto['quantidade_minima'], 1, ',', '.') ?></td>
+        <td><?= number_format((float) $produto['quantidade_minima'], 2, ',', '.') ?> <?= htmlspecialchars($produto['unidade'] ?? 'UN', ENT_QUOTES) ?></td>
     </tr>
     <tr>
         <th>Valor Unitário</th>

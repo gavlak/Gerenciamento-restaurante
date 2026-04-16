@@ -2,7 +2,7 @@
 
 <h2>Editar Produto</h2>
 
-<form method="POST" action="<?= BASE_URL ?>/produtos/update/<?= (int) $produto['id'] ?>" style="max-width: 500px;">
+<form method="POST" action="<?= BASE_URL ?>/produtos/update/<?= (int) $produto['id'] ?>" style="max-width: 520px;">
 
     <div class="form-group">
         <label for="nome">Nome</label>
@@ -20,15 +20,30 @@
 
     <div class="form-group">
         <label for="quantidade">Quantidade</label>
-        <input
-            type="text"
-            id="quantidade"
-            name="quantidade"
-            value="<?= htmlspecialchars($old['quantidade'] ?? (string) $produto['quantidade'], ENT_QUOTES) ?>"
-            class="<?= !empty($errors['quantidade']) ? 'is-invalid' : '' ?>"
-        >
+        <div class="input-group">
+            <input
+                type="text"
+                id="quantidade"
+                name="quantidade"
+                value="<?= htmlspecialchars($old['quantidade'] ?? (string) $produto['quantidade'], ENT_QUOTES) ?>"
+                class="<?= !empty($errors['quantidade']) ? 'is-invalid' : '' ?>"
+            >
+            <select
+                id="unidade"
+                name="unidade"
+                class="<?= !empty($errors['unidade']) ? 'is-invalid' : '' ?>"
+            >
+                <?php $unidadeAtual = $old['unidade'] ?? ($produto['unidade'] ?? 'UN'); ?>
+                <?php foreach ($unidades as $u): ?>
+                    <option value="<?= $u ?>" <?= $unidadeAtual === $u ? 'selected' : '' ?>><?= $u ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
         <?php if (!empty($errors['quantidade'])): ?>
             <span class="field-error"><?= htmlspecialchars($errors['quantidade'], ENT_QUOTES) ?></span>
+        <?php endif; ?>
+        <?php if (!empty($errors['unidade'])): ?>
+            <span class="field-error"><?= htmlspecialchars($errors['unidade'], ENT_QUOTES) ?></span>
         <?php endif; ?>
     </div>
 

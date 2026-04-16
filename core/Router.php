@@ -63,7 +63,7 @@ class Router
 
         http_response_code(404);
         require_once ROOT_PATH . '/views/layout/header.php';
-        echo '<h2>404 — Página não encontrada</h2><p><a href="' . BASE_URL . '/items">Voltar</a></p>';
+        echo '<h2>404 — Pagina nao encontrada</h2><p><a href="' . BASE_URL . '/produtos">Voltar</a></p>';
         require_once ROOT_PATH . '/views/layout/footer.php';
     }
 

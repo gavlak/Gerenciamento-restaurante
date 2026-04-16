@@ -76,6 +76,7 @@ class NotaFiscalController extends BaseController
                 nome:              $p['nome'],
                 quantidade:        $p['quantidade'],
                 quantidade_minima: 1,
+                unidade:           $p['unidade'] ?? 'UN',
                 valor:             $p['valor'],
                 data_compra:       $dataCompra,
             );
@@ -191,6 +192,31 @@ class NotaFiscalController extends BaseController
                 $quantidade = (float) str_replace(',', '.', $m[1]);
             }
 
+            // Padrão: "UN: KG" ou "UN: UNID"
+            $unidadeItem = 'UN';
+            if (preg_match('/UN:?\s*([A-Za-z]+)/i', $rowText, $m)) {
+                $raw = strtoupper(trim($m[1]));
+                $map = [
+                    'KG'   => 'KG',
+                    'QUILO'=> 'KG',
+                    'G'    => 'G',
+                    'GR'   => 'G',
+                    'GRAMA'=> 'G',
+                    'L'    => 'L',
+                    'LT'   => 'L',
+                    'LITRO'=> 'L',
+                    'ML'   => 'ML',
+                    'UN'   => 'UN',
+                    'UND'  => 'UN',
+                    'UNID' => 'UN',
+                    'PCT'  => 'PCT',
+                    'PC'   => 'PCT',
+                    'CX'   => 'CX',
+                    'CAIXA'=> 'CX',
+                ];
+                $unidadeItem = $map[$raw] ?? 'UN';
+            }
+
             // Padrão: "Vl. Unit.:5,99" ou "Val. Unit: 5.99"
             if (preg_match('/Vl\.?\s*Unit\.?:?\s*([\d.,]+)/i', $rowText, $m)) {
                 $valor = (float) str_replace(',', '.', $m[1]);
@@ -212,6 +238,7 @@ class NotaFiscalController extends BaseController
             $produtos[] = [
                 'nome'       => $nome,
                 'quantidade' => $quantidade,
+                'unidade'    => $unidadeItem,
                 'valor'      => round($valor, 2),
             ];
         }

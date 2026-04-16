@@ -50,6 +50,14 @@ $router->get('funcionarios/edit/{id}',    'FuncionarioController', 'edit',   pro
 $router->post('funcionarios/update/{id}', 'FuncionarioController', 'update', protected: true);
 $router->post('funcionarios/delete/{id}', 'FuncionarioController', 'delete', protected: true);
 
+// Cardápios
+$router->get('cardapios',              'CardapioController', 'index',  protected: true);
+$router->get('cardapios/create',       'CardapioController', 'create', protected: true);
+$router->post('cardapios/store',       'CardapioController', 'store',  protected: true);
+$router->get('cardapios/edit/{id}',    'CardapioController', 'edit',   protected: true);
+$router->post('cardapios/update/{id}', 'CardapioController', 'update', protected: true);
+$router->post('cardapios/delete/{id}', 'CardapioController', 'delete', protected: true);
+
 // Scanner QR Code (NFC-e)
 $router->get('notas/scanner',   'NotaFiscalController', 'scanner',  protected: true);
 $router->post('notas/importar', 'NotaFiscalController', 'importar', protected: true);
