@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace app\Controllers;
+namespace App\Controllers;
 
-use app\Models\Cardapio;
-use app\Models\Produto;
+use App\Models\Cardapio;
+use App\Models\Produto;
+use Core\Session;
 
 class CardapioController extends BaseController
 {
@@ -28,8 +29,8 @@ class CardapioController extends BaseController
 
         $this->render('cardapios/index', [
             'cardapios' => $cardapios,
-            'success'   => \Session::getFlash('success'),
-            'error'     => \Session::getFlash('error'),
+            'success'   => Session::getFlash('success'),
+            'error'     => Session::getFlash('error'),
         ]);
     }
 
@@ -76,7 +77,7 @@ class CardapioController extends BaseController
             insumoIds: $insumoIds,
         );
 
-        \Session::flash('success', 'Cardapio cadastrado com sucesso!');
+        Session::flash('success', 'Cardapio cadastrado com sucesso!');
         $this->redirect('/cardapios');
     }
 
@@ -86,7 +87,7 @@ class CardapioController extends BaseController
 
         if (!$cardapio) {
             http_response_code(404);
-            \Session::flash('error', 'Cardapio não encontrado.');
+            Session::flash('error', 'Cardapio não encontrado.');
             $this->redirect('/cardapios');
             return;
         }
@@ -137,14 +138,14 @@ class CardapioController extends BaseController
             insumoIds: $insumoIds,
         );
 
-        \Session::flash('success', 'Cardapio atualizado com sucesso!');
+        Session::flash('success', 'Cardapio atualizado com sucesso!');
         $this->redirect('/cardapios');
     }
 
     public function delete(string $id): void
     {
         $this->cardapioModel->delete((int) $id);
-        \Session::flash('success', 'Cardapio removido.');
+        Session::flash('success', 'Cardapio removido.');
         $this->redirect('/cardapios');
     }
 }

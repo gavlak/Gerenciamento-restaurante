@@ -1,9 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace app\Controllers;
+namespace App\Controllers;
 
-use app\Models\Produto;
+use App\Models\Produto;
+use Core\Session;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 class NotaFiscalController extends BaseController
 {
@@ -14,29 +17,22 @@ class NotaFiscalController extends BaseController
         $this->produtoModel = new Produto();
     }
 
-    /**
-     * Exibe a tela do scanner QR Code (webcam).
-     */
     public function scanner(): void
     {
         $this->render('notas/scanner', [
-            'error' => \Session::getFlash('error'),
+            'error' => Session::getFlash('error'),
         ]);
     }
 
-    /**
-     * Recebe a URL da NFC-e, faz scraping e importa os produtos.
-     */
     public function importar(): void
     {
         $url = trim($_POST['url'] ?? '');
         $chave = trim($_POST['chave_acesso'] ?? '');
 
-        // Se recebeu chave de acesso em vez de URL, montar a URL de consulta
         if ($url === '' && $chave !== '') {
-            $chave = preg_replace('/\D/', '', $chave); // só dígitos
+            $chave = preg_replace('/\D/', '', $chave); 
             if (strlen($chave) !== 44) {
-                \Session::flash('error', 'A chave de acesso deve ter exatamente 44 dígitos.');
+                Session::flash('error', 'A chave de acesso deve ter exatamente 44 dígitos.');
                 $this->redirect('/notas/scanner');
                 return;
             }
@@ -44,7 +40,7 @@ class NotaFiscalController extends BaseController
         }
 
         if ($url === '') {
-            \Session::flash('error', 'Nenhuma URL ou chave de acesso informada.');
+            Session::flash('error', 'Nenhuma URL ou chave de acesso informada.');
             $this->redirect('/notas/scanner');
             return;
         }
@@ -53,7 +49,7 @@ class NotaFiscalController extends BaseController
         $html = $this->fetchNfce($url);
 
         if ($html === false) {
-            \Session::flash('error', 'Não foi possível acessar a página da nota fiscal. Verifique sua conexão.');
+            Session::flash('error', 'Não foi possível acessar a página da nota fiscal. Verifique sua conexão.');
             $this->redirect('/notas/scanner');
             return;
         }
@@ -62,7 +58,7 @@ class NotaFiscalController extends BaseController
         $produtos = $this->parseNfce($html);
 
         if (empty($produtos)) {
-            \Session::flash('error', 'Nenhum produto encontrado na nota fiscal. Verifique se o QR Code é de uma NFC-e válida.');
+            Session::flash('error', 'Nenhum produto encontrado na nota fiscal. Verifique se o QR Code é de uma NFC-e válida.');
             $this->redirect('/notas/scanner');
             return;
         }
@@ -83,41 +79,36 @@ class NotaFiscalController extends BaseController
             $count++;
         }
 
-        \Session::flash('success', "{$count} produto(s) importado(s) com sucesso!");
+        Session::flash('success', "{$count} produto(s) importado(s) com sucesso!");
         $this->redirect('/produtos');
     }
 
-    /**
-     * Busca o HTML da página da NFC-e via cURL.
-     */
     private function fetchNfce(string $url): string|false
     {
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL            => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_TIMEOUT        => 30,
-            CURLOPT_USERAGENT      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        $client = new Client([
+            'timeout'         => 30,
+            'connect_timeout' => 10,
+            'verify'          => false,
+            'headers'         => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            ],
         ]);
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        try {
+            $response = $client->get($url);
 
-        if ($response === false || $httpCode !== 200) {
+            if ($response->getStatusCode() !== 200) {
+                return false;
+            }
+
+            return (string) $response->getBody();
+        } catch (GuzzleException $e) {
+            error_log('Falha ao buscar NFC-e: ' . $e->getMessage());
             return false;
         }
-
-        return $response;
     }
 
-    /**
-     * Faz parsing do HTML da NFC-e e extrai os produtos.
-     * Compatível com a estrutura da SEFAZ-PR.
-     */
+
     private function parseNfce(string $html): array
     {
         libxml_use_internal_errors(true);

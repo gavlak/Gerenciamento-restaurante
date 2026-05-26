@@ -7,6 +7,7 @@
 - MySQL 5.7+ ou MariaDB 10.3+
 - XAMPP (recomendado para Windows)
 - Extensão PHP cURL habilitada (para leitura de NFC-e)
+- [Composer](https://getcomposer.org) instalado globalmente
 
 ## 1. Configuração do XAMPP
 
@@ -28,7 +29,20 @@ Edite o arquivo `C:\xampp\php\php.ini`:
 ## 2. Instalação do Projeto
 
 1. Copie (ou clone) a pasta do projeto para `C:\xampp\htdocs\PhpProjs`
-2. Inicie o Apache e o MySQL no XAMPP Control Panel
+2. Abra um terminal na pasta do projeto e execute `composer install` para baixar as dependências (Simple Router, Carbon) e gerar o autoloader em `vendor/`
+3. Inicie o Apache e o MySQL no XAMPP Control Panel
+
+## 2.1. Dependências via Composer
+
+O projeto usa os seguintes pacotes (declarados em `composer.json`):
+
+| Pacote | Uso |
+|--------|-----|
+| `pecee/simple-router` | Sistema de rotas com URLs transparentes |
+| `nesbot/carbon` | Manipulação e formatação de datas (ex.: "há 3 dias") |
+| `guzzlehttp/guzzle` | Cliente HTTP — usado em `NotaFiscalController` para buscar páginas de NFC-e |
+
+Após adicionar/remover classes no projeto, rode `composer dump-autoload` para atualizar o mapa de classes.
 
 ## 3. Configuração do Banco de Dados
 
@@ -72,30 +86,36 @@ Altere `user` e `pass` caso tenha configurado senha no MySQL.
 
 ```
 PhpProjs/
-├── index.php              ← Ponto de entrada + rotas
+├── composer.json          ← Manifest de dependências + autoload PSR-4
+├── composer.lock          ← Versões travadas das dependências
+├── vendor/                ← Pacotes instalados pelo Composer (não versionado)
+├── index.php              ← Ponto de entrada (carrega autoloader + rotas Simple Router)
 ├── .htaccess              ← Regras de rewrite do Apache
 ├── database.sql           ← Schema do banco
 ├── config/database.php    ← Credenciais do banco
-├── core/
-│   ├── Router.php         ← Sistema de rotas
-│   └── Session.php        ← Gerenciamento de sessão
-├── app/
-│   ├── Middleware/AuthMiddleware.php
+├── core/                  ← Namespace Core\
+│   └── Session.php        ← Gerenciamento de sessão (Core\Session)
+├── app/                   ← Namespace App\
+│   ├── Middleware/
+│   │   └── AuthMiddleware.php  (implementa Pecee\Http\Middleware\IMiddleware)
 │   ├── Controllers/
 │   │   ├── BaseController.php
 │   │   ├── AuthController.php
 │   │   ├── ProdutoController.php
+│   │   ├── CardapioController.php
 │   │   ├── FuncionarioController.php
 │   │   └── NotaFiscalController.php
 │   └── Models/
 │       ├── BaseModel.php
 │       ├── User.php
 │       ├── Produto.php
+│       ├── Cardapio.php
 │       └── Funcionario.php
 └── views/
     ├── layout/header.php / footer.php
     ├── auth/login.php
     ├── produtos/index.php / create.php / edit.php / show.php
+    ├── cardapios/index.php / create.php / edit.php
     ├── funcionarios/index.php / create.php / edit.php
     └── notas/scanner.php
 ```

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\Models;
+namespace App\Models;
 
 class Cardapio extends BaseModel
 {

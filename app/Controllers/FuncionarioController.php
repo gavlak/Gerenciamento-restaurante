@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace app\Controllers;
+namespace App\Controllers;
 
-use app\Models\Funcionario;
+use App\Models\Funcionario;
+use Core\Session;
 
 class FuncionarioController extends BaseController
 {
@@ -20,8 +21,8 @@ class FuncionarioController extends BaseController
 
         $this->render('funcionarios/index', [
             'funcionarios' => $funcionarios,
-            'success'      => \Session::getFlash('success'),
-            'error'        => \Session::getFlash('error'),
+            'success'      => Session::getFlash('success'),
+            'error'        => Session::getFlash('error'),
         ]);
     }
 
@@ -51,7 +52,7 @@ class FuncionarioController extends BaseController
             telefone: htmlspecialchars(trim($_POST['telefone'] ?? ''), ENT_QUOTES),
         );
 
-        \Session::flash('success', 'Funcionário cadastrado com sucesso!');
+        Session::flash('success', 'Funcionário cadastrado com sucesso!');
         $this->redirect('/funcionarios');
     }
 
@@ -95,14 +96,14 @@ class FuncionarioController extends BaseController
             telefone: htmlspecialchars(trim($_POST['telefone'] ?? ''), ENT_QUOTES),
         );
 
-        \Session::flash('success', 'Funcionário atualizado com sucesso!');
+        Session::flash('success', 'Funcionário atualizado com sucesso!');
         $this->redirect('/funcionarios');
     }
 
     public function delete(string $id): void
     {
         $this->funcionarioModel->delete((int) $id);
-        \Session::flash('success', 'Funcionário removido.');
+        Session::flash('success', 'Funcionário removido.');
         $this->redirect('/funcionarios');
     }
 }

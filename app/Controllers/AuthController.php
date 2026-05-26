@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace app\Controllers;
+namespace App\Controllers;
 
-use app\Models\User;
+use App\Models\User;
+use Core\Session;
 
 class AuthController extends BaseController
 {
@@ -14,19 +15,17 @@ class AuthController extends BaseController
         $this->userModel = new User();
     }
 
-    // GET /login
     public function loginForm(): void
     {
-        if (\Session::has('user_id')) {
+        if (Session::has('user_id')) {
             $this->redirect('/produtos');
         }
 
         $this->render('auth/login', [
-            'error' => \Session::getFlash('error'),
+            'error' => Session::getFlash('error'),
         ]);
     }
 
-    // POST /login
     public function loginSubmit(): void
     {
         $errors = $this->validate($_POST, [
@@ -52,8 +51,11 @@ class AuthController extends BaseController
             return;
         }
 
-        \Session::set('user_id',   $user['id']);
-        \Session::set('user_name', $user['name']);
+        session_regenerate_id(true);
+
+        Session::set('user_id',       $user['id']);
+        Session::set('user_name',     $user['name']);
+        Session::set('last_activity', time());
 
         $this->redirect('/produtos');
     }
@@ -61,7 +63,7 @@ class AuthController extends BaseController
     // GET /logout
     public function logout(): void
     {
-        \Session::destroy();
+        Session::destroy();
         $this->redirect('/login');
     }
 }

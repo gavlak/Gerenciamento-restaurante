@@ -386,7 +386,7 @@
 </head>
 <body>
 <nav>
-    <?php if (\Session::has('user_id')): ?>
+    <?php if (\Core\Session::has('user_id')): ?>
         <a href="<?= BASE_URL ?>/produtos" class="nav-brand">Gavis Restaurante</a>
         <div class="nav-links">
             <a href="<?= BASE_URL ?>/produtos">Estoque</a>

@@ -8,8 +8,13 @@
 Thumbs.db
 .DS_Store
 
-# Composer (se usar no futuro)
+# Composer
 /vendor/
+composer.phar
 
 # Arquivos sensíveis
 .env
+
+# Configuracoes locais de agentes / ferramentas
+.claude/
+/temp/

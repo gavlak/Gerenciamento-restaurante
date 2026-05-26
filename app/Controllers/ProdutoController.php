@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace app\Controllers;
+namespace App\Controllers;
 
-use app\Models\Produto;
+use App\Models\Produto;
+use Core\Session;
 
 class ProdutoController extends BaseController
 {
@@ -23,8 +24,8 @@ class ProdutoController extends BaseController
 
         $this->render('produtos/index', [
             'produtos' => $produtos,
-            'success'  => \Session::getFlash('success'),
-            'error'    => \Session::getFlash('error'),
+            'success'  => Session::getFlash('success'),
+            'error'    => Session::getFlash('error'),
         ]);
     }
 
@@ -69,7 +70,7 @@ class ProdutoController extends BaseController
             data_compra:       $_POST['data_compra'],
         );
 
-        \Session::flash('success', 'Produto cadastrado com sucesso!');
+        Session::flash('success', 'Produto cadastrado com sucesso!');
         $this->redirect('/produtos');
     }
 
@@ -129,14 +130,14 @@ class ProdutoController extends BaseController
             data_compra:       $_POST['data_compra'],
         );
 
-        \Session::flash('success', 'Produto atualizado com sucesso!');
+        Session::flash('success', 'Produto atualizado com sucesso!');
         $this->redirect('/produtos');
     }
 
     public function delete(string $id): void
     {
         $this->produtoModel->delete((int) $id);
-        \Session::flash('success', 'Produto removido.');
+        Session::flash('success', 'Produto removido.');
         $this->redirect('/produtos');
     }
 

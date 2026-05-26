@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\Controllers;
+namespace App\Controllers;
 
 abstract class BaseController
 {

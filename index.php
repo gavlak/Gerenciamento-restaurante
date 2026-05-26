@@ -3,63 +3,64 @@ declare(strict_types=1);
 
 define('ROOT_PATH', __DIR__);
 
-// Detect the subfolder prefix (e.g. "/PhpProjs") so redirects work correctly
-// when the app is served from a subdirectory like localhost/PhpProjs/
-$scriptDir = trim(dirname($_SERVER['SCRIPT_NAME']), '/');
+$scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+$scriptDir = trim($scriptDir, '/');
 define('BASE_URL', $scriptDir !== '' ? '/' . $scriptDir : '');
 
-// Autoloader — maps namespaced classes to file paths automatically
-spl_autoload_register(function (string $class): void {
-    $file = ROOT_PATH . DIRECTORY_SEPARATOR
-          . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
-    if (file_exists($file)) {
-        require_once $file;
-    }
-});
+require __DIR__ . '/vendor/autoload.php';
 
-require_once ROOT_PATH . '/core/Session.php';
-require_once ROOT_PATH . '/core/Router.php';
+use Pecee\SimpleRouter\SimpleRouter;
+use Pecee\SimpleRouter\Exceptions\NotFoundHttpException;
+use App\Middleware\AuthMiddleware;
+use Core\Session;
 
 Session::start();
 
-// ---------------------------------------------------------------------------
-// Route definitions
-// ---------------------------------------------------------------------------
-$router = new Router();
+SimpleRouter::group(['prefix' => BASE_URL], function () {
 
-// Public routes
-$router->get('login',  'AuthController', 'loginForm');
-$router->post('login', 'AuthController', 'loginSubmit');
-$router->get('logout', 'AuthController', 'logout');
+    SimpleRouter::get('/login',  'App\Controllers\AuthController@loginForm');
+    SimpleRouter::post('/login', 'App\Controllers\AuthController@loginSubmit');
+    SimpleRouter::get('/logout', 'App\Controllers\AuthController@logout');
 
-// Produtos (estoque)
-$router->get('',                       'ProdutoController',      'index',  protected: true);
-$router->get('produtos',              'ProdutoController',      'index',  protected: true);
-$router->get('produtos/create',       'ProdutoController',      'create', protected: true);
-$router->post('produtos/store',       'ProdutoController',      'store',  protected: true);
-$router->get('produtos/edit/{id}',    'ProdutoController',      'edit',   protected: true);
-$router->post('produtos/update/{id}', 'ProdutoController',      'update', protected: true);
-$router->post('produtos/delete/{id}', 'ProdutoController',      'delete', protected: true);
-$router->get('produtos/{id}',         'ProdutoController',      'show',   protected: true);
+    SimpleRouter::group(['middleware' => AuthMiddleware::class], function () {
 
-// Funcionários
-$router->get('funcionarios',              'FuncionarioController', 'index',  protected: true);
-$router->get('funcionarios/create',       'FuncionarioController', 'create', protected: true);
-$router->post('funcionarios/store',       'FuncionarioController', 'store',  protected: true);
-$router->get('funcionarios/edit/{id}',    'FuncionarioController', 'edit',   protected: true);
-$router->post('funcionarios/update/{id}', 'FuncionarioController', 'update', protected: true);
-$router->post('funcionarios/delete/{id}', 'FuncionarioController', 'delete', protected: true);
+        SimpleRouter::get('/',                       'App\Controllers\ProdutoController@index');
+        SimpleRouter::get('/produtos',               'App\Controllers\ProdutoController@index');
+        SimpleRouter::get('/produtos/create',        'App\Controllers\ProdutoController@create');
+        SimpleRouter::post('/produtos/store',        'App\Controllers\ProdutoController@store');
+        SimpleRouter::get('/produtos/edit/{id}',     'App\Controllers\ProdutoController@edit');
+        SimpleRouter::post('/produtos/update/{id}',  'App\Controllers\ProdutoController@update');
+        SimpleRouter::post('/produtos/delete/{id}',  'App\Controllers\ProdutoController@delete');
+        SimpleRouter::get('/produtos/{id}',          'App\Controllers\ProdutoController@show')
+            ->where(['id' => '[0-9]+']);
 
-// Cardápios
-$router->get('cardapios',              'CardapioController', 'index',  protected: true);
-$router->get('cardapios/create',       'CardapioController', 'create', protected: true);
-$router->post('cardapios/store',       'CardapioController', 'store',  protected: true);
-$router->get('cardapios/edit/{id}',    'CardapioController', 'edit',   protected: true);
-$router->post('cardapios/update/{id}', 'CardapioController', 'update', protected: true);
-$router->post('cardapios/delete/{id}', 'CardapioController', 'delete', protected: true);
+        SimpleRouter::get('/funcionarios',              'App\Controllers\FuncionarioController@index');
+        SimpleRouter::get('/funcionarios/create',       'App\Controllers\FuncionarioController@create');
+        SimpleRouter::post('/funcionarios/store',       'App\Controllers\FuncionarioController@store');
+        SimpleRouter::get('/funcionarios/edit/{id}',    'App\Controllers\FuncionarioController@edit');
+        SimpleRouter::post('/funcionarios/update/{id}', 'App\Controllers\FuncionarioController@update');
+        SimpleRouter::post('/funcionarios/delete/{id}', 'App\Controllers\FuncionarioController@delete');
 
-// Scanner QR Code (NFC-e)
-$router->get('notas/scanner',   'NotaFiscalController', 'scanner',  protected: true);
-$router->post('notas/importar', 'NotaFiscalController', 'importar', protected: true);
+        SimpleRouter::get('/cardapios',              'App\Controllers\CardapioController@index');
+        SimpleRouter::get('/cardapios/create',       'App\Controllers\CardapioController@create');
+        SimpleRouter::post('/cardapios/store',       'App\Controllers\CardapioController@store');
+        SimpleRouter::get('/cardapios/edit/{id}',    'App\Controllers\CardapioController@edit');
+        SimpleRouter::post('/cardapios/update/{id}', 'App\Controllers\CardapioController@update');
+        SimpleRouter::post('/cardapios/delete/{id}', 'App\Controllers\CardapioController@delete');
 
-$router->dispatch();
+        SimpleRouter::get('/notas/scanner',   'App\Controllers\NotaFiscalController@scanner');
+        SimpleRouter::post('/notas/importar', 'App\Controllers\NotaFiscalController@importar');
+    });
+});
+
+SimpleRouter::error(function ($request, \Exception $exception) {
+    if ($exception instanceof NotFoundHttpException) {
+        http_response_code(404);
+        require ROOT_PATH . '/views/layout/header.php';
+        echo '<h2>404 — Pagina nao encontrada</h2><p><a href="' . BASE_URL . '/produtos">Voltar</a></p>';
+        require ROOT_PATH . '/views/layout/footer.php';
+        exit;
+    }
+});
+
+SimpleRouter::start();

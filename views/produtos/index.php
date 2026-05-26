@@ -49,7 +49,15 @@
                     <span style="color:#6b7280; font-size:.8rem;"><?= htmlspecialchars($unidade, ENT_QUOTES) ?></span>
                 </td>
                 <td>R$ <?= number_format((float) $produto['valor'], 2, ',', '.') ?></td>
-                <td><?= $produto['data_compra'] ? htmlspecialchars($produto['data_compra'], ENT_QUOTES) : '—' ?></td>
+                <td>
+                    <?php if (!empty($produto['data_compra'])): ?>
+                        <?php $data = \Carbon\Carbon::parse($produto['data_compra'])->locale('pt_BR'); ?>
+                        <?= $data->format('d/m/Y') ?>
+                        <div style="color:#6b7280; font-size:.8rem;"><?= $data->diffForHumans() ?></div>
+                    <?php else: ?>
+                        &mdash;
+                    <?php endif; ?>
+                </td>
                 <td>
                     <div class="actions">
                         <a href="<?= BASE_URL ?>/produtos/<?= (int) $produto['id'] ?>" class="btn btn-secondary">Ver</a>
