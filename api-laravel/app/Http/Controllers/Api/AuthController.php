@@ -22,7 +22,7 @@ class AuthController extends Controller
 
         $usuario = User::where('email', $dados['email'])->first();
 
-        if (! $usuario || ! Hash::check($dados['password'], $usuario->password)) {
+        if (! $usuario || ! Hash::check($dados['password'], $usuario->password_hash)) {
             return $this->erro('As credenciais informadas estao incorretas.', 401);
         }
 

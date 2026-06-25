@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('nome', 150);
             $table->string('dia', 20);
             $table->text('detalhes');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

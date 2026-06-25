@@ -9,6 +9,8 @@ class Cardapio extends Model
 {
     protected $table = 'cardapios';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'nome',
         'dia',

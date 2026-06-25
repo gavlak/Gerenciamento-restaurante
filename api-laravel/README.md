@@ -4,6 +4,8 @@ API REST para gestão de restaurante, desenvolvida em **Laravel 12** com autenti
 
 Disciplina: Desenvolvimento Web Servidor — UTFPR
 
+> 🔗 **A API conecta no mesmo banco de dados (`mvc_app`) do sistema base** (`sistema-php/`). Ela lê e grava os mesmos produtos, funcionários e cardápios — um cadastro feito na tela do sistema aparece na API, e o contrário também.
+
 ---
 
 ## 👥 Integrantes e atividades

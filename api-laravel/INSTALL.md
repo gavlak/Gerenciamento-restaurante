@@ -47,35 +47,42 @@ Edite o `.env` com as credenciais do seu MySQL (padrão do XAMPP: usuário `root
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=restaurante_api
+DB_DATABASE=mvc_app
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
 ---
 
-## 4. Criar o banco de dados
+## 4. Banco de dados (compartilhado com o sistema base)
 
-No **phpMyAdmin** (`http://localhost/phpmyadmin`) ou no MySQL CLI, crie o banco:
+A API usa o **mesmo banco** do sistema PHP (`sistema-php/`): o **`mvc_app`**. Dessa forma, os dois sistemas leem e gravam **os mesmos dados** (produtos, funcionários, cardápios) — um cadastro feito na tela do sistema base aparece na API, e vice-versa.
+
+Crie o banco, caso ainda não exista (no **phpMyAdmin** ou no MySQL CLI):
 
 ```sql
-CREATE DATABASE restaurante_api CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE mvc_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 > Inicie o **Apache** e o **MySQL** no XAMPP Control Panel antes deste passo.
 
 ---
 
-## 5. Rodar as migrations e popular dados de teste
+## 5. Criar as tabelas
+
+Num banco `mvc_app` **vazio**, rode:
 
 ```bash
 php artisan migrate --seed
 ```
 
-Isso cria as tabelas (`users`, `produtos`, `funcionarios`, `cardapios`, `cardapio_produtos`, `personal_access_tokens`) e insere:
+Isso cria as tabelas (`users`, `produtos`, `funcionarios`, `cardapios`, `cardapio_produtos`, `personal_access_tokens`) e insere o admin (`admin@example.com` / `secret123`) + dados de exemplo.
 
-- **Usuário admin** → `admin@example.com` / `secret123`
-- Produtos, funcionários e um cardápio de exemplo
+> **Se o `mvc_app` já tiver as tabelas** (criadas pelo sistema base do `sistema-php/`), rode apenas a migration de tokens do Sanctum, para não recriar o que já existe:
+>
+> ```bash
+> php artisan migrate --path=database/migrations/2026_06_24_224933_create_personal_access_tokens_table.php
+> ```
 
 > Para recriar o banco do zero a qualquer momento: `php artisan migrate:fresh --seed`
 

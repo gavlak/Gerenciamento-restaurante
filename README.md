@@ -9,7 +9,7 @@ O repositório reúne as duas fases do projeto:
 | [`sistema-php/`](sistema-php/) | Trabalhos 1 e 2 | PHP puro (MVC + Simple Router) | Sistema web com telas HTML, autenticação por sessão, CRUD de produtos/funcionários/cardápios e leitura de NFC-e |
 | [`api-laravel/`](api-laravel/) | Trabalho 3 | Laravel 12 + Sanctum | API REST (somente JSON) sobre o mesmo domínio, para consumo por aplicações terceiras |
 
-A API do Trabalho 3 (`api-laravel/`) foi desenvolvida no **mesmo contexto/tema** do sistema base, reaproveitando suas regras de negócio (unidades de medida, dias da semana dos cardápios, alerta de estoque baixo).
+A API do Trabalho 3 (`api-laravel/`) foi desenvolvida no **mesmo contexto/tema** do sistema base e **conecta no mesmo banco de dados (`mvc_app`)** — os dois compartilham os mesmos produtos, funcionários e cardápios. Um cadastro feito na tela do `sistema-php/` aparece na API, e vice-versa.
 
 ---
 

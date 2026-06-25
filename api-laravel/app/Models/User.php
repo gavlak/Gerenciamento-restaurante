@@ -11,22 +11,20 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'password_hash',
     ];
 
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password_hash',
     ];
 
-    protected function casts(): array
+    public function getAuthPassword(): string
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->password_hash;
     }
 }

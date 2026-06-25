@@ -8,6 +8,8 @@ class Funcionario extends Model
 {
     protected $table = 'funcionarios';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'nome',
         'cargo',

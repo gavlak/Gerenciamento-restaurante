@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('unidade', 10)->default('UN');
             $table->decimal('valor', 10, 2)->default(0);
             $table->date('data_compra')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

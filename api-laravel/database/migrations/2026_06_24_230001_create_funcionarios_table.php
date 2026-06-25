@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('nome', 150);
             $table->string('cargo', 100);
             $table->string('telefone', 20)->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 
