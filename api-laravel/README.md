@@ -55,7 +55,9 @@ php artisan key:generate
 
 # 3. Ajustar credenciais do banco no .env (DB_DATABASE, DB_USERNAME, DB_PASSWORD)
 
-# 4. Criar tabelas e dados de teste
+# 4. Criar tabelas e dados de teste (num banco mvc_app vazio).
+#    Se o mvc_app ja tiver as tabelas do sistema base, rode apenas a
+#    migration de tokens do Sanctum -- veja o INSTALL.md.
 php artisan migrate --seed
 
 # 5. Subir o servidor
@@ -153,7 +155,7 @@ Instruções de importação e execução em **[INSTALL.md](INSTALL.md#-testes-c
 ## 🗂️ Estrutura (principais arquivos)
 
 ```
-restaurante-api/
+api-laravel/
 ├── app/
 │   ├── Http/
 │   │   └── Controllers/Api/   ← AuthController, ProdutoController, FuncionarioController, CardapioController
@@ -176,3 +178,10 @@ restaurante-api/
 - O **401** (sem token) retorna o padrão do Laravel: `{ "message": "Unauthenticated." }`.
 - Unidades de medida aceitas em produtos: `UN, KG, G, L, ML, CX, PCT` (normalizadas para maiúsculas).
 - Dias aceitos em cardápios: `Segunda, Terca, Quarta, Quinta, Sexta, Sabado, Domingo`.
+
+### Bugs e funcionalidades faltantes
+
+- **Não há bugs conhecidos** — todas as rotas foram testadas (ver a coleção do Postman).
+- A API é **somente JSON** (sem telas). As telas HTML e o leitor de **NFC-e (QR Code)** ficam no sistema base (`sistema-php/`), não na API.
+- Não há recuperação de senha nem verificação de e-mail (não fazem parte do escopo da API).
+- Como a API **compartilha o banco `mvc_app`** com o sistema base, os models usam `timestamps = false` e a autenticação usa a coluna `password_hash` (esquema do sistema original).

@@ -39,3 +39,13 @@ Cada projeto tem suas próprias dependências e documentação de instalação (
 
 - **`api-laravel/`** → `composer install`, configurar `.env`, `php artisan migrate --seed`, `php artisan serve`
 - **`sistema-php/`** → copiar para o `htdocs` do XAMPP, `composer install`, importar `database.sql` no MySQL
+
+---
+
+## ⚠️ Particularidades e observações
+
+- **Banco compartilhado:** a API (`api-laravel/`) e o sistema base (`sistema-php/`) usam o **mesmo banco `mvc_app`** — um cadastro feito num aparece no outro.
+- **Instalação:** se o `mvc_app` já tiver as tabelas do sistema base, a API só precisa adicionar a tabela de tokens do Sanctum — detalhes em [`api-laravel/INSTALL.md`](api-laravel/INSTALL.md).
+- **Sem bugs conhecidos:** todas as rotas da API foram testadas (coleção Postman em [`api-laravel/postman/`](api-laravel/postman/)).
+- **Funcionalidades por sistema:** as telas HTML e a leitura de **NFC-e (QR Code)** estão no `sistema-php/`; a API é **somente JSON**, sem telas (por ser um Web Service). Recuperação de senha e verificação de e-mail não fazem parte do escopo.
+- **Mensagens de validação** da API seguem o padrão do Laravel (em inglês).
