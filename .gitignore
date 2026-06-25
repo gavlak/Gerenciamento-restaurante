@@ -1,0 +1,10 @@
+# Dependencias (regeneradas com composer install)
+*/vendor/
+*/node_modules/
+
+# Ambiente
+*/.env
+
+# Logs e cache do Laravel
+api-laravel/storage/*.key
+*/storage/logs/*.log

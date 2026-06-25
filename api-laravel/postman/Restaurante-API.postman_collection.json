@@ -1,0 +1,290 @@
+{
+  "info": {
+    "name": "Restaurante API",
+    "description": "Colecao de testes da API REST de Gestao de Restaurante (Laravel + Sanctum).\n\nComo usar:\n1. Inicie o servidor: php artisan serve\n2. Rode a requisicao 'Auth > Login' primeiro. O token e salvo automaticamente na variavel de colecao {{token}} via script de teste.\n3. As demais requisicoes ja usam {{token}} no header Authorization.\n\nVariaveis: base_url (http://127.0.0.1:8000/api) e token (preenchida no login).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('token', json.data.token);",
+                  "    console.log('Token salvo na variavel {{token}}');",
+                  "}",
+                  "pm.test('login 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"secret123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Me (usuario autenticado)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/me", "host": ["{{base_url}}"], "path": ["me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/logout", "host": ["{{base_url}}"], "path": ["logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "Listar produtos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/produtos", "host": ["{{base_url}}"], "path": ["produtos"] }
+          }
+        },
+        {
+          "name": "Criar produto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Tomate\",\n    \"quantidade\": 8,\n    \"quantidade_minima\": 4,\n    \"unidade\": \"KG\",\n    \"valor\": 6.50,\n    \"data_compra\": \"2026-06-20\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/produtos", "host": ["{{base_url}}"], "path": ["produtos"] }
+          }
+        },
+        {
+          "name": "Ver produto",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/produtos/1", "host": ["{{base_url}}"], "path": ["produtos", "1"] }
+          }
+        },
+        {
+          "name": "Atualizar produto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Tomate Italiano\",\n    \"quantidade\": 12,\n    \"quantidade_minima\": 4,\n    \"unidade\": \"KG\",\n    \"valor\": 7.00,\n    \"data_compra\": \"2026-06-21\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/produtos/1", "host": ["{{base_url}}"], "path": ["produtos", "1"] }
+          }
+        },
+        {
+          "name": "Remover produto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/produtos/1", "host": ["{{base_url}}"], "path": ["produtos", "1"] }
+          }
+        },
+        {
+          "name": "Produtos com estoque baixo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/produtos-estoque-baixo", "host": ["{{base_url}}"], "path": ["produtos-estoque-baixo"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Funcionarios",
+      "item": [
+        {
+          "name": "Listar funcionarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/funcionarios", "host": ["{{base_url}}"], "path": ["funcionarios"] }
+          }
+        },
+        {
+          "name": "Criar funcionario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Carla Dias\",\n    \"cargo\": \"Gerente\",\n    \"telefone\": \"(45) 98888-1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/funcionarios", "host": ["{{base_url}}"], "path": ["funcionarios"] }
+          }
+        },
+        {
+          "name": "Ver funcionario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/funcionarios/1", "host": ["{{base_url}}"], "path": ["funcionarios", "1"] }
+          }
+        },
+        {
+          "name": "Atualizar funcionario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Carla Dias Souza\",\n    \"cargo\": \"Gerente Geral\",\n    \"telefone\": \"(45) 98888-0000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/funcionarios/1", "host": ["{{base_url}}"], "path": ["funcionarios", "1"] }
+          }
+        },
+        {
+          "name": "Remover funcionario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/funcionarios/1", "host": ["{{base_url}}"], "path": ["funcionarios", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cardapios",
+      "item": [
+        {
+          "name": "Listar cardapios",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/cardapios", "host": ["{{base_url}}"], "path": ["cardapios"] }
+          }
+        },
+        {
+          "name": "Criar cardapio (com insumos)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Jantar Especial\",\n    \"dia\": \"Sexta\",\n    \"detalhes\": \"Risoto de camarao com salada\",\n    \"insumos\": [1, 3]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/cardapios", "host": ["{{base_url}}"], "path": ["cardapios"] }
+          }
+        },
+        {
+          "name": "Ver cardapio",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/cardapios/1", "host": ["{{base_url}}"], "path": ["cardapios", "1"] }
+          }
+        },
+        {
+          "name": "Atualizar cardapio",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nome\": \"Almoco Executivo\",\n    \"dia\": \"Quarta\",\n    \"detalhes\": \"Arroz, feijao, bife e salada\",\n    \"insumos\": [1, 2]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/cardapios/1", "host": ["{{base_url}}"], "path": ["cardapios", "1"] }
+          }
+        },
+        {
+          "name": "Remover cardapio",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/cardapios/1", "host": ["{{base_url}}"], "path": ["cardapios", "1"] }
+          }
+        }
+      ]
+    }
+  ]
+}
